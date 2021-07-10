@@ -9,3 +9,4 @@ HR app prototype. Details will come soon.
 - Testing
 - Dedicated API adapter
 - Performance
+- Responsive design
