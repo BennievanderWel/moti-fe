@@ -4,25 +4,36 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 import styles from './Login.module.scss';
 
-const Login: FC = () => {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+interface Props {
+  login: (email: string, password: string) => Promise<void>;
+}
 
-  const onSubmit = () => {
+const Login: FC<Props> = ({ login }) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [email, setEmail] = React.useState('bennie@test.nl');
+  const [password, setPassword] = React.useState('test');
+
+  const onSubmit = async () => {
     setIsSubmitting((current) => !current);
-    setTimeout(() => setIsSubmitting((current) => !current), 1000);
+    try {
+      await login(email, password);
+    } catch (err) {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className={styles.container}>
       <span className={styles.banner}>moti</span>
       <div className={styles.loginForm}>
-        <Form name="login" initialValues={{ remember: true }}>
-          <Form.Item name="e-mail">
+        <Form name="login" initialValues={{ remember: true, email, password }}>
+          <Form.Item name="email">
             <Input
               type="email"
               size="large"
               placeholder="E-mail"
               prefix={<UserOutlined />}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Item>
           <Form.Item name="password">
@@ -30,6 +41,7 @@ const Login: FC = () => {
               size="large"
               placeholder="Password"
               prefix={<LockOutlined />}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Item>
           <Form.Item name="submit">
@@ -38,6 +50,7 @@ const Login: FC = () => {
                 type="primary"
                 htmlType="submit"
                 loading={isSubmitting}
+                disabled={!email || !password}
                 onClick={onSubmit}
               >
                 Login
