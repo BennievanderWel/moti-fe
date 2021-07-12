@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
@@ -12,11 +13,13 @@ const Login: FC<Props> = ({ login }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [email, setEmail] = React.useState('bennie@test.nl');
   const [password, setPassword] = React.useState('test');
+  const history = useHistory();
 
   const onSubmit = async () => {
     setIsSubmitting((current) => !current);
     try {
       await login(email, password);
+      history.push('/');
     } catch (err) {
       setIsSubmitting(false);
     }

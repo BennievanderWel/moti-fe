@@ -1,0 +1,20 @@
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.sidebar {
+  width: 14rem;
+  height: 100%;
+  background-color: whitesmoke;
+}
+
+.content {
+  flex-grow: 1;
+  height: 100%;
+  background-color: snow;
+  box-shadow: -2px 0px 5px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: -2px 0px 5px 0px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: -2px 0px 5px 0px rgba(0, 0, 0, 0.3);
+}

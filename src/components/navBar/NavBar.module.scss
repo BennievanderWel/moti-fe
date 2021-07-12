@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.banner {
+  height: 8rem;
+  font-family: 'Gloria Hallelujah', cursive;
+  font-size: 4rem;
+  color: cadetblue;
+  display: flex;
+  justify-content: center;
+}
+
+.menu {
+  background-color: transparent;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  font-size: 1rem;
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+    margin-bottom: -0.25rem;
+  }
+}
+
+.menuItem:last-of-type {
+  margin-top: auto;
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+    margin-top: -0.25rem;
+  }
+}
+
+.logoutIcon {
+  transform: rotate(180deg);
+}
