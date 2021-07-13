@@ -12,7 +12,7 @@ interface Props {
 const Login: FC<Props> = ({ login }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [email, setEmail] = React.useState('bennie@test.nl');
-  const [password, setPassword] = React.useState('test');
+  const [password, setPassword] = React.useState('password');
   const history = useHistory();
 
   const onSubmit = async () => {

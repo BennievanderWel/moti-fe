@@ -5,6 +5,12 @@ import './ant-design.less';
 import App from './components/App';
 // import reportWebVitals from './reportWebVitals';
 
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import config from './firebase.config';
+
+firebase.initializeApp(config);
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

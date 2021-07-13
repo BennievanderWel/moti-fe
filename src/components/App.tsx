@@ -6,6 +6,11 @@ import {
   RouteProps,
   BrowserRouter as Router,
 } from 'react-router-dom';
+import {
+  loginUser,
+  logoutUser,
+  startListeningToLoggedInUserChanges,
+} from '../api';
 
 import Login from './login/Login';
 import Dashboard from './dashboard/Dashboard';
@@ -14,6 +19,17 @@ import styles from './App.module.scss';
 type ProtectedRouteProps = {
   isAuthenticated: boolean;
 } & RouteProps;
+
+type ContextProps = {
+  logout: () => void;
+  currentUser: User | null;
+};
+
+type User = {
+  uid: string;
+  firstName: string;
+  lastName: string;
+};
 
 export const ProtectedRoute = ({
   isAuthenticated,
@@ -26,49 +42,62 @@ export const ProtectedRoute = ({
   }
 };
 
-type ContextProps = {
-  logout: () => void;
-};
-
 export const AppContext = React.createContext<Partial<ContextProps>>({});
 
 const App: FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(true);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isCheckingUser, setIsCheckingUser] = React.useState(true);
+  const [currentUser, setCurrentUser] = React.useState<User | null>(null);
 
-  const login = (email: string, password: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (
-          (email === 'bennie@test.nl' ||
-            email === 'daan@test.nl' ||
-            email === 'nik@test.nl') &&
-          password === 'test'
-        ) {
-          setIsAuthenticated(true);
-          resolve();
-        } else {
-          reject();
-        }
-      }, 1000);
+  React.useEffect(() => {
+    startListeningToLoggedInUserChanges((user: User) => {
+      if (user) {
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+      }
+      setIsCheckingUser(false);
     });
+  }, []);
+
+  const login = async (email: string, password: string): Promise<void> => {
+    try {
+      const user = await loginUser(email, password);
+      setCurrentUser(user as User);
+      setIsAuthenticated(true);
+    } catch (err) {
+      throw Error(err);
+    }
   };
 
-  const logout = () => setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      await logoutUser();
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
-    <AppContext.Provider value={{ logout }}>
-      <Router>
-        <div className={styles.container}>
-          <Switch>
-            <Route exact path="/login">
-              <Login login={login} />
-            </Route>
-            <ProtectedRoute isAuthenticated={isAuthenticated} path="/">
-              <Dashboard />
-            </ProtectedRoute>
-          </Switch>
-        </div>
-      </Router>
+    <AppContext.Provider value={{ logout, currentUser }}>
+      {!isCheckingUser && (
+        <Router>
+          <div className={styles.container}>
+            <Switch>
+              <Route exact path="/login">
+                <Login login={login} />
+              </Route>
+              <ProtectedRoute isAuthenticated={isAuthenticated} path="/">
+                <Dashboard />
+              </ProtectedRoute>
+            </Switch>
+          </div>
+        </Router>
+      )}
     </AppContext.Provider>
   );
 };
