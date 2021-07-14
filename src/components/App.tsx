@@ -20,12 +20,12 @@ type ProtectedRouteProps = {
   isAuthenticated: boolean;
 } & RouteProps;
 
-type ContextProps = {
+type AppContextProps = {
   logout: () => void;
   currentUser: User | null;
 };
 
-type User = {
+export type User = {
   uid: string;
   firstName: string;
   lastName: string;
@@ -42,7 +42,7 @@ export const ProtectedRoute = ({
   }
 };
 
-export const AppContext = React.createContext<Partial<ContextProps>>({});
+export const AppContext = React.createContext<Partial<AppContextProps>>({});
 
 const App: FC = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -82,22 +82,22 @@ const App: FC = () => {
     }
   };
 
+  if (isCheckingUser) return null;
+
   return (
-    <AppContext.Provider value={{ logout, currentUser }}>
-      {!isCheckingUser && (
-        <Router>
-          <div className={styles.container}>
-            <Switch>
-              <Route exact path="/login">
-                <Login login={login} />
-              </Route>
-              <ProtectedRoute isAuthenticated={isAuthenticated} path="/">
-                <Dashboard />
-              </ProtectedRoute>
-            </Switch>
-          </div>
-        </Router>
-      )}
+    <AppContext.Provider value={{ logout }}>
+      <Router>
+        <div className={styles.container}>
+          <Switch>
+            <Route exact path="/login">
+              <Login login={login} />
+            </Route>
+            <ProtectedRoute isAuthenticated={isAuthenticated} path="/">
+              {currentUser && <Dashboard currentUser={currentUser} />}
+            </ProtectedRoute>
+          </Switch>
+        </div>
+      </Router>
     </AppContext.Provider>
   );
 };
